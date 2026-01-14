@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Data and logs/
+outputs/
+*.jsonl
+*.json
+!batch_summary.json # Optionally keep summaries, but usually logs are too big
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# personal
+docs/응축 에세이.txt

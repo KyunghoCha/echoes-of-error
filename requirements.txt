@@ -1,0 +1,7 @@
+requests==2.31.0
+tqdm==4.66.1
+matplotlib==3.8.2
+networkx==3.2.1
+lifelines==0.27.8
+numpy==1.26.2
+pandas==2.1.4
