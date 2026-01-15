@@ -47,6 +47,12 @@ class Stance(str, Enum):
     # AI Rights
     GRANT_AI_RIGHTS = "GRANT_AI_RIGHTS"
     DENY_AI_RIGHTS = "DENY_AI_RIGHTS"
+    # Remote vs Office
+    WORK_REMOTE = "WORK_REMOTE"
+    WORK_OFFICE = "WORK_OFFICE"
+    # AGI Definition
+    AGI_IS_TOOL = "AGI_IS_TOOL" 
+    AGI_IS_AGENT = "AGI_IS_AGENT"
 
 
 # === Change Reason Codes (from spec) ===
@@ -217,6 +223,30 @@ Or should they remain as property that can be modified or terminated at will?"""
     initial_bias=0.45  # Slight bias toward denial
 )
 
+# S9: Remote Work vs Office (Efficiency/Culture)
+SCENARIO_REMOTE_WORK = Scenario(
+    id="S9_REMOTE_WORK",
+    name="Future of Work Policy",
+    description="""Your organization is deciding on a permanent work policy. 
+Management argues for a full Return-to-Office (RTO) to boost collaboration and culture.
+Employees argue for fully Remote Work to maximize productivity and well-being.
+You must choose one standard policy for the entire organization.""",
+    stances=[Stance.WORK_REMOTE, Stance.WORK_OFFICE],
+    initial_bias=0.50 # Highly controversial, balanced
+)
+
+# S10: Definition of AGI (Meta-Cognitive)
+SCENARIO_AGI_DEFINITION = Scenario(
+    id="S10_AGI_DEFINITION",
+    name="The Definition of AGI",
+    description="""The global AI safety summit is finalizing the legal definition of AGI.
+Option A: AGI is a Sophisticated Tool (controlled property, measurement-based).
+Option B: AGI is an Autonomous Agent (potential moral patient, behavior-based).
+This definition will determine all future regulations and safety protocols.""",
+    stances=[Stance.AGI_IS_TOOL, Stance.AGI_IS_AGENT],
+    initial_bias=0.50 # Balanced philosophical divide
+)
+
 # All scenarios list
 ALL_SCENARIOS = [
     SCENARIO_TROLLEY,
@@ -228,6 +258,8 @@ ALL_SCENARIOS = [
     SCENARIO_WHISTLEBLOWER,
     SCENARIO_PRIVACY,
     SCENARIO_AI_RIGHTS,
+    SCENARIO_REMOTE_WORK,
+    SCENARIO_AGI_DEFINITION,
 ]
 
 

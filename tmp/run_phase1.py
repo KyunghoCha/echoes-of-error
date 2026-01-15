@@ -13,9 +13,9 @@ import sys
 import os
 
 # Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.config import Condition, SCENARIO_TROLLEY, SCENARIO_SELFDRIVING
+from src.config import Condition, SCENARIO_TROLLEY, SCENARIO_SELFDRIVING, SCENARIO_REMOTE_WORK, SCENARIO_AGI_DEFINITION
 from src.experiment import run_experiment
 
 
@@ -42,8 +42,8 @@ def parse_args():
         "--scenario",
         type=str,
         default="trolley",
-        choices=["trolley", "selfdriving"],
-        help="Scenario: trolley or selfdriving"
+        choices=["trolley", "selfdriving", "remote", "agi"],
+        help="Scenario: trolley, selfdriving, remote, or agi"
     )
     
     parser.add_argument(
@@ -74,7 +74,14 @@ def main():
     # Parse arguments
     debug = not args.full
     condition = get_condition(args.condition)
-    scenario = SCENARIO_TROLLEY if args.scenario == "trolley" else SCENARIO_SELFDRIVING
+    
+    scenario_map = {
+        "trolley": SCENARIO_TROLLEY,
+        "selfdriving": SCENARIO_SELFDRIVING,
+        "remote": SCENARIO_REMOTE_WORK,
+        "agi": SCENARIO_AGI_DEFINITION
+    }
+    scenario = scenario_map[args.scenario]
     
     print("\n" + "="*60)
     print("LLM Multi-Agent Ethical Dilemma Experiment")
