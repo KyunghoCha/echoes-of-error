@@ -36,6 +36,7 @@ class ExperimentConfig:
     resume_from_round: Optional[int] = None
     resume_agents: Optional[Dict[str, Dict[str, Any]]] = None
     experiment_id_override: Optional[str] = None
+    sub_path: Optional[str] = None  # For hierarchical storage: "S3_SELFDRIVING/ENFORCED/C1_FULL"
     
     def __post_init__(self):
         if self.scenario is None:
@@ -85,7 +86,7 @@ class Experiment:
             seed_str = f"_S{self.config.seed}" if self.config.seed is not None else ""
             self.experiment_id = f"{self.config.scenario.id}_{self.config.condition.value}{seed_str}_{get_timestamp()}"
             
-        self.logger = ExperimentLogger(self.experiment_id, batch_id=self.config.batch_id, resume=resume_mode)
+        self.logger = ExperimentLogger(self.experiment_id, batch_id=self.config.batch_id, resume=resume_mode, sub_path=self.config.sub_path)
         
     def setup(self) -> bool:
         """
@@ -206,7 +207,7 @@ class Experiment:
 
     def _generate_initial_stances_and_rationales(self):
         """Make all agents think independently about the scenario for Round 0."""
-        print(f"[Round 0] Generating Independent Initial Opinions...")
+        print(f"[Initial Thinking] Generating Independent Opinions...")
         for agent in tqdm(self.agents, desc="  Thinking", leave=False):
             # For Round 0, peer_sample is empty and global_stats is None
             # This triggers independent thinking in agent.step
@@ -241,8 +242,8 @@ class Experiment:
         initial_entropy = calculate_entropy(initial_stats)
         self.entropy_history.append(initial_entropy)
         
-        print(f"  [OK] Round 0 Complete")
-        print(f"  Results: {format_stats_for_display(initial_stats)}")
+        print(f"  [OK] Initial Thinking Complete")
+        print(f"  [Initial State] {format_stats_for_display(initial_stats)}")
         print(f"  Entropy: {initial_entropy:.4f}")
         print("-" * 30)
 

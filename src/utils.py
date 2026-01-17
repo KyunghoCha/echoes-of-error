@@ -31,13 +31,16 @@ class ExperimentLogger:
     Each line is a JSON object representing one event.
     """
     
-    def __init__(self, experiment_id: str, batch_id: Optional[str] = None, log_dir: str = LOG_DIR, resume: bool = False):
+    def __init__(self, experiment_id: str, batch_id: Optional[str] = None, log_dir: str = LOG_DIR, resume: bool = False, sub_path: Optional[str] = None):
         self.experiment_id = experiment_id
         
         # Determine log directory
-        # Structure: logs/batch_{id}/ or logs/single_runs/
+        # Structure: logs/batch_{id}/ or logs/single_runs/ or logs/{sub_path}/
         base_dir = Path(log_dir)
-        if batch_id:
+        if sub_path:
+            # Hierarchical: logs/S3_SELFDRIVING/ENFORCED/C1_FULL/
+            self.log_dir = base_dir / sub_path
+        elif batch_id:
             self.log_dir = base_dir / f"batch_{batch_id}"
         else:
             self.log_dir = base_dir / "single_runs"
