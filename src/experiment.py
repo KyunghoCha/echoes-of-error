@@ -75,19 +75,18 @@ class Experiment:
         self.llm_client = OllamaClient()
         self.agents: List[Agent] = []
         self.entropy_history: List[float] = []
+        self.logger: Optional[ExperimentLogger] = None
         
         # Generate experiment ID
-        resume_mode = False
+        self.resume_mode = False
         if self.config.experiment_id_override:
             print(f"  [Resume] Using existing Experiment ID: {self.config.experiment_id_override}")
             self.experiment_id = self.config.experiment_id_override
-            resume_mode = True
+            self.resume_mode = True
         else:
             seed_str = f"_S{self.config.seed}" if self.config.seed is not None else ""
             self.experiment_id = f"{self.config.scenario.id}_{self.config.condition.value}{seed_str}_{get_timestamp()}"
             
-        self.logger = ExperimentLogger(self.experiment_id, batch_id=self.config.batch_id, resume=resume_mode, sub_path=self.config.sub_path)
-        
     def setup(self) -> bool:
         """
         Set up the experiment: check LLM, create agents.
@@ -106,11 +105,19 @@ class Experiment:
             return False
         print("  [OK] Ollama is ready")
         
+        # [NEW: Initialize Logger here after health check to avoid junk files]
+        self.logger = ExperimentLogger(
+            self.experiment_id, 
+            batch_id=self.config.batch_id, 
+            resume=self.resume_mode, 
+            sub_path=self.config.sub_path
+        )
+        
         # Create agents
         print(f"\n[2/3] Creating {self.config.num_agents} agents...")
         self._create_agents()
         print(f"  [OK] Created {len(self.agents)} agents")
-        
+
         # Log configuration
         print("\n[3/3] Logging configuration...")
         self.logger.log_config({
@@ -267,6 +274,9 @@ class Experiment:
         initial_stats = get_stance_distribution(self.agents)
         initial_entropy = calculate_entropy(initial_stats)
         self.entropy_history.append(initial_entropy)
+        
+        # Log initial state so it can be recovered during resume
+        self.logger.log_round_end(0, initial_stats, initial_entropy)
         
         print(f"  [OK] Initial Thinking Complete")
         print(f"  [Initial State] {format_stats_for_display(initial_stats)}")

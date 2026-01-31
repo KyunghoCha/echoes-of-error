@@ -138,7 +138,7 @@ MEDIUM_CONFIG = {
 SWEEP_CONFIG = {
     "num_agents": 30,
     "num_rounds": 10,
-    "seeds_per_condition": 150,
+    "seeds_per_condition": 5,
     "conditions": [
         Condition.C0_INDEPENDENT,
         Condition.C1_FULL,
@@ -276,7 +276,8 @@ def run_batch(config: dict, output_dir: str, batch_id: str, initial_stance_mode:
                             else:
                                 print("  [WARNING] Truncation failed. Starting over.")
                         else:
-                            print("  [WARNING] No valid rounds found. Starting over.")
+                            print(f"  [Cleanup] Junk log found (no rounds). Overwriting {jsonl_path.stem}")
+                            experiment_id_override = jsonl_path.stem
                 
                 print(f"\n[{experiment_count}/{total_experiments}] "
                       f"{scenario.id} | {condition.value} | Seed {seed}")
@@ -431,6 +432,9 @@ def run_batch_hierarchical(config: dict, output_dir: str, batch_id: str, initial
                             resume_from_round = last_round
                             resume_agents = agent_states
                             experiment_id_override = jsonl_path.stem
+                    else:
+                        print(f"  [Cleanup] Found junk log (no rounds). Overwriting same ID...")
+                        experiment_id_override = jsonl_path.stem
                 
                 print(f"\n[{experiment_count}/{total_experiments}] "
                       f"{scenario.id} | {condition.value} | Seed {seed}")

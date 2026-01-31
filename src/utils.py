@@ -52,11 +52,14 @@ class ExperimentLogger:
         
         # Initialize log file with header ONLY if not resuming
         if not resume:
-            self._write_event({
-                "type": "experiment_start",
-                "experiment_id": experiment_id,
-                "timestamp": get_timestamp()
-            })
+            # First write should overwrite if it's a fresh start
+            with open(self.log_file, 'w', encoding='utf-8') as f:
+                event = {
+                    "type": "experiment_start",
+                    "experiment_id": experiment_id,
+                    "timestamp": get_timestamp()
+                }
+                f.write(json.dumps(event, ensure_ascii=False) + '\n')
     
     def _write_event(self, event: Dict[str, Any]):
         """Write a single event to the log file."""
